@@ -115,6 +115,10 @@ h1 {
 .weather-desc { text-transform: capitalize; font-weight: 500;} 
 
 /* --- LISTE DE COURSES --- */
+.shopping-widget {
+    grid-column: 1 / -1; 
+}
+
 .shopping-input-group { 
     display: flex; 
     gap: 0.8rem; 
@@ -160,34 +164,58 @@ h1 {
     transform: scale(1.05); 
 }
 
-.shopping-list { list-style: none; overflow-y: auto; max-height: 280px; padding-right: 5px; }
+.shopping-list { 
+    display: grid; 
+    /* Crée autant de colonnes de 250px minimum que possible sur la largeur de l'écran */
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+    gap: 0.8rem 1.5rem; /* Espacement vertical et horizontal entre les articles */
+    list-style: none; 
+    overflow-y: auto; 
+    max-height: 400px; /* On augmente un peu la hauteur maximale */
+    padding-right: 5px; 
+}
 .shopping-list::-webkit-scrollbar { width: 6px; }
 .shopping-list::-webkit-scrollbar-thumb { background: #e0e0e0; border-radius: 10px; }
 
+/* Design des éléments mis à jour pour s'adapter aux colonnes */
 .shopping-item { 
     display: flex; 
     align-items: center; 
-    padding: 0.8rem 0; 
-    border-bottom: 1px solid #f0f0f0; 
-    transition: background 0.2s;
+    padding: 0.8rem 1.2rem; 
+    background-color: #fafafa; /* Fond coloré au lieu d'une simple ligne en bas */
+    border-radius: 12px;
+    border: 1px solid #f0f0f0;
+    transition: transform 0.2s, box-shadow 0.2s;
 }
-.shopping-item:last-child { border-bottom: none; }
+.shopping-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
 .shopping-item input[type="checkbox"] { 
     margin-right: 12px; 
     width: 20px; 
     height: 20px; 
     cursor: pointer; 
     accent-color: var(--accent); 
+    flex-shrink: 0;
 }
-.shopping-item span { flex-grow: 1; font-weight: 500; }
-.shopping-item.completed span { text-decoration: line-through; color: var(--text-muted); opacity: 0.7;}
+.shopping-item span { 
+    flex-grow: 1; 
+    font-weight: 500; 
+    word-break: break-word; /* Évite qu'un mot très long casse la colonne */
+}
+.shopping-item.completed span { 
+    text-decoration: line-through; 
+    color: var(--text-muted); 
+    opacity: 0.7;
+}
 .delete-btn { 
     background: none; border: none; color: #ff7675; cursor: pointer; 
     font-size: 1.8rem; line-height: 1; padding: 0 5px; opacity: 0.6; transition: opacity 0.2s;
+    flex-shrink: 0;
 }
 .delete-btn:hover { opacity: 1; }
 #list-loader { text-align: center; color: var(--accent); font-size: 0.9rem; margin-top: 1rem; font-weight: bold; }
-
 /* --- MODALE MÉTÉO (Pop-up) --- */
 .modal {
     display: none; 
