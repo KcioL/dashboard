@@ -3,9 +3,10 @@ console.log("▶️ Le fichier script.js a bien démarré !");
 // ==========================================
 // 1. IMPORTATION DE FIREBASE
 // ==========================================
-import { initializeApp } from "https://unpkg.com/firebase@10.7.1/firebase-app.js";
+// On utilise gstatic au lieu de unpkg pour plus de stabilité
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy } 
-from "https://unpkg.com/firebase@10.7.1/firebase-firestore.js";
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 // ==========================================
 // 2. CONFIGURATION FIREBASE
