@@ -28,10 +28,10 @@ body {
     /* Couleur de secours */
     background-color: var(--bg-color); 
     
-    /* Image de fond avec un calque crème transparent (rgba) par-dessus */
+    /* Image de fond locale avec un calque crème transparent (rgba) par-dessus */
     background-image: 
         linear-gradient(rgba(253, 251, 247, 0.75), rgba(253, 251, 247, 0.75)), 
-        url('https://images.unsplash.com/photo-1618220179428-22790b46a0eb?auto=format&fit=crop&w=1920&q=80');
+        url('salon.jpg');
     
     background-size: cover;
     background-position: center;
@@ -124,7 +124,7 @@ h1 {
 
 #shopping-input { 
     flex: 1 1 auto; 
-    min-width: 0; /* Empêche le débordement sur petit écran */
+    min-width: 0; 
     padding: 1rem; 
     border: 2px solid #eee; 
     border-radius: 12px; 
@@ -144,7 +144,7 @@ h1 {
     background: var(--accent); 
     color: white; 
     border: none; 
-    width: 3.5rem; /* Bouton carré fixe */
+    width: 3.5rem; 
     border-radius: 12px; 
     cursor: pointer; 
     font-weight: bold; 
