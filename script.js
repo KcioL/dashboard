@@ -249,3 +249,57 @@ function showHourlyForecast(targetDateString, dateDisplay) {
         hourlyForecastList.appendChild(hourlyCard);
     });
 }
+// ==========================================
+// 6. GESTION DE LA ROUE DU DESTIN
+// ==========================================
+const spinBtn = document.getElementById('spin-btn');
+const wheelResult = document.getElementById('wheel-result');
+
+// 📝 La liste des idées d'activités 
+const wheelOptions = [
+    "Soirée canapé & Animés 🍿",
+    "resto 🍽️",
+    "Balade moto 🏍️",
+    "Jeu coop 🎮",
+    "On commande des pizzas ! 🍕",
+    "Bowling 🎳",
+    "Ciné ou film à la maison 🎬",
+    "Soirée jeux de société 🎲",
+    "rando 👟"
+];
+
+let isSpinning = false;
+
+spinBtn.addEventListener('click', () => {
+    // Si la roue tourne déjà, on empêche de recliquer
+    if (isSpinning) return;
+    
+    isSpinning = true;
+    spinBtn.textContent = "Ça tourne... ⏳";
+    wheelResult.classList.add('spinning');
+    
+    let spins = 0;
+    const maxSpins = 20; // Nombre de fois que le texte va changer avant de s'arrêter
+    
+    // Intervalle pour créer l'effet "machine à sous"
+    const spinInterval = setInterval(() => {
+        // Choix aléatoire pour l'animation
+        const randomTempIndex = Math.floor(Math.random() * wheelOptions.length);
+        wheelResult.textContent = wheelOptions[randomTempIndex];
+        spins++;
+        
+        // Quand on atteint le max, on arrête la roue sur un choix final
+        if (spins >= maxSpins) {
+            clearInterval(spinInterval);
+            
+            // Le vrai choix final
+            const finalIndex = Math.floor(Math.random() * wheelOptions.length);
+            
+            wheelResult.classList.remove('spinning');
+            wheelResult.textContent = wheelOptions[finalIndex];
+            
+            spinBtn.textContent = "Relancer !";
+            isSpinning = false;
+        }
+    }, 100); // Vitesse de défilement (100 millisecondes)
+});
