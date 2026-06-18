@@ -1,20 +1,19 @@
 :root {
     /* --- PALETTE COSY & CHALEUREUSE --- */
-    --bg-color: #fdfbf7;      /* Un blanc cassé/crème très doux (façon lin) */
+    --bg-color: #fdfbf7;      /* Un blanc cassé/crème très doux */
     --card-bg: #ffffff;
-    --text-main: #4a443c;     /* Un marron/gris chaud, beaucoup moins agressif que le noir pur */
-    --text-muted: #a3988f;    /* Un gris taupe doux pour les textes secondaires */
+    --text-main: #4a443c;     /* Un marron/gris chaud */
+    --text-muted: #a3988f;    /* Un gris taupe doux */
     
     /* Couleur d'accentuation (boutons, icônes) */
-    --accent: #e07a5f;        /* Un terracotta / pêche très chaleureux */
+    --accent: #e07a5f;        /* Terracotta / pêche chaleureux */
     --accent-hover: #cc654a;
     
     /* Design global */
-    --border-radius: 24px;    /* Des angles plus arrondis pour un effet "bulle" */
-    --card-shadow: 0 12px 35px rgba(138, 121, 104, 0.08); /* Une ombre légèrement teintée et chaude */
+    --border-radius: 24px;    /* Angles bien arrondis */
+    --card-shadow: 0 12px 35px rgba(138, 121, 104, 0.08); /* Ombre douce */
 
-    /* --- NOUVEAU : COULEUR DES CARTES MÉTÉO --- */
-    /* Un bleu-gris pastel pour faire ressortir les nuages blancs des icônes ! */
+    /* Couleur des cartes météo (pour faire ressortir les nuages blancs) */
     --weather-card-bg: #d4dde4; 
 }
 
@@ -26,7 +25,18 @@
 }
 
 body { 
+    /* Couleur de secours */
     background-color: var(--bg-color); 
+    
+    /* Image de fond avec un calque crème transparent (rgba) par-dessus */
+    background-image: 
+        linear-gradient(rgba(253, 251, 247, 0.75), rgba(253, 251, 247, 0.75)), 
+        url('https://images.unsplash.com/photo-1618220179428-22790b46a0eb?auto=format&fit=crop&w=1920&q=80');
+    
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed; /* L'image reste fixe au défilement */
+    
     color: var(--text-main); 
     padding: 2rem; 
     min-height: 100vh; 
@@ -77,7 +87,6 @@ h1 {
 
 /* --- WIDGET HORLOGE (Dégradé chaud) --- */
 .time-widget { 
-    /* Un joli dégradé façon coucher de soleil pour remplacer le violet sombre */
     background: linear-gradient(135deg, #f4a261 0%, #e76f51 100%); 
     color: white; 
     text-align: center; 
@@ -94,7 +103,7 @@ h1 {
 }
 .weather-widget-container:hover {
     transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(224, 122, 95, 0.15); /* Ombre aux couleurs de l'accent */
+    box-shadow: 0 15px 35px rgba(224, 122, 95, 0.15); 
     border: 2px solid var(--accent);
 }
 .weather-info { 
@@ -106,9 +115,16 @@ h1 {
 .weather-desc { text-transform: capitalize; font-weight: 500;} 
 
 /* --- LISTE DE COURSES --- */
-.shopping-input-group { display: flex; gap: 0.8rem; margin-bottom: 1.5rem; }
+.shopping-input-group { 
+    display: flex; 
+    gap: 0.8rem; 
+    margin-bottom: 1.5rem; 
+    width: 100%; 
+}
+
 #shopping-input { 
-    flex-grow: 1; 
+    flex: 1 1 auto; 
+    min-width: 0; /* Empêche le débordement sur petit écran */
     padding: 1rem; 
     border: 2px solid #eee; 
     border-radius: 12px; 
@@ -116,26 +132,35 @@ h1 {
     transition: border-color 0.2s;
     background-color: #fafafa;
 }
+
 #shopping-input:focus {
     outline: none;
     border-color: var(--accent);
     background-color: white;
 }
+
 #add-item-btn { 
+    flex: 0 0 auto; 
     background: var(--accent); 
     color: white; 
     border: none; 
-    padding: 0 1.2rem; 
+    width: 3.5rem; /* Bouton carré fixe */
     border-radius: 12px; 
     cursor: pointer; 
     font-weight: bold; 
-    font-size: 1.5rem; 
+    font-size: 1.8rem; 
+    display: flex; 
+    align-items: center;
+    justify-content: center;
     transition: all 0.2s; 
 }
-#add-item-btn:hover { background: var(--accent-hover); transform: scale(1.05); }
+
+#add-item-btn:hover { 
+    background: var(--accent-hover); 
+    transform: scale(1.05); 
+}
 
 .shopping-list { list-style: none; overflow-y: auto; max-height: 280px; padding-right: 5px; }
-/* Customisation de la barre de scroll */
 .shopping-list::-webkit-scrollbar { width: 6px; }
 .shopping-list::-webkit-scrollbar-thumb { background: #e0e0e0; border-radius: 10px; }
 
@@ -152,7 +177,7 @@ h1 {
     width: 20px; 
     height: 20px; 
     cursor: pointer; 
-    accent-color: var(--accent); /* Colore la case cochée avec notre couleur Terracotta */
+    accent-color: var(--accent); 
 }
 .shopping-item span { flex-grow: 1; font-weight: 500; }
 .shopping-item.completed span { text-decoration: line-through; color: var(--text-muted); opacity: 0.7;}
@@ -167,9 +192,9 @@ h1 {
 .modal {
     display: none; 
     position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%;
-    background-color: rgba(74, 68, 60, 0.6); /* Un fond assombri plus chaud */
+    background-color: rgba(74, 68, 60, 0.6); 
     align-items: center; justify-content: center;
-    backdrop-filter: blur(4px); /* Rend l'arrière-plan un peu flou ! */
+    backdrop-filter: blur(4px); 
 }
 .modal-content {
     background-color: var(--card-bg);
@@ -205,7 +230,6 @@ h1 {
 .forecast-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 1rem; }
 
 .forecast-day {
-    /* UTILISATION DE LA NOUVELLE COULEUR ! */
     background: var(--weather-card-bg);
     padding: 1.2rem 0.5rem;
     border-radius: 16px;
@@ -221,7 +245,7 @@ h1 {
     border-color: var(--accent);
 }
 .forecast-date { font-weight: 800; margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--text-main); }
-.forecast-icon { width: 55px; height: 55px; filter: drop-shadow(0px 4px 4px rgba(0,0,0,0.1)); /* Ajoute une petite ombre à l'icône ! */ }
+.forecast-icon { width: 55px; height: 55px; filter: drop-shadow(0px 4px 4px rgba(0,0,0,0.1)); }
 .forecast-temp { font-weight: 800; color: var(--text-main); margin: 0.5rem 0; font-size: 1.2rem; }
 .forecast-desc { font-size: 0.75rem; color: #5a6268; text-transform: capitalize; font-weight: 600; }
 
