@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Partagé</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>👋 Dashboard</h1>
+    </header>
+
+    <div class="dashboard-grid">
+        <div class="widget time-widget">
+            <div id="clock">00:00</div>
+            <div id="date">Chargement...</div>
+        </div>
+
+        <!-- Widget Météo mis à jour (Cliquable) -->
+        <div class="widget weather-widget-container" id="weather-widget" title="Cliquez pour les prévisions !">
+            <h2 class="widget-title">🌤️ Météo (<span id="current-city-name">Pau</span>)</h2>
+            <div class="weather-info">
+                <div class="weather-temp" id="weather-temp">--°C</div>
+                <div style="text-align: right;">
+                    <div class="weather-desc" id="weather-desc">Chargement...</div>
+                    <div style="font-size: 0.8rem; color: #65676b;" id="weather-minmax">Min: --° Max: --°</div>
+                </div>
+            </div>
+            <!-- Petite icône indicative -->
+            <div style="text-align: center; margin-top: 10px; font-size: 0.8rem; color: var(--accent);">
+                👆 Voir les prévisions
+            </div>
+        </div>
+
+        <!-- Widget de Courses connecté à Firebase -->
+        <div class="widget" style="grid-row: span 2;">
+            <h2 class="widget-title">🛒 Courses (Synchro Cloud)</h2>
+            <div class="shopping-input-group">
+                <input type="text" id="shopping-input" placeholder="Ajouter un article...">
+                <button id="add-item-btn">+</button>
+            </div>
+            
+            <div id="list-loader">Connexion à la base de données...</div>
+            <ul class="shopping-list" id="shopping-list"></ul>
+        </div>
+    </div>
+
+    <!-- Modale (Fenêtre pop-up) pour les prévisions météo -->
+    <div id="weather-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-modal">&times;</span>
+            <h2>Prévisions Météo</h2>
+            
+            <div class="city-selector">
+                <label for="city-select">Choisir une ville :</label>
+                <select id="city-select">
+                    <option value="Pau,fr">Pau</option>
+                    <option value="Saint-Paul-lès-Dax,fr">Saint-Paul-lès-Dax</option>
+                    <option value="Mourenx,fr">Mourenx</option>
+                </select>
+            </div>
+
+            <div id="forecast-loader" style="text-align: center; margin: 20px 0;">Chargement des prévisions...</div>
+            
+            <div id="forecast-container" class="forecast-grid">
+                <!-- Les prévisions 5 jours apparaîtront ici -->
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>
