@@ -64,6 +64,13 @@
             <div id="forecast-container" class="forecast-grid">
                 <!-- Les prévisions 5 jours apparaîtront ici -->
             </div>
+            <!-- NOUVEAU : Conteneur pour les prévisions détaillées (caché par défaut) -->
+            <div id="hourly-container" style="display: none; margin-top: 25px; padding-top: 20px; border-top: 1px solid #eee;">
+                <h3 id="hourly-title" style="margin-bottom: 15px; font-size: 1.1rem; color: var(--text-main);">Détails</h3>
+                <div id="hourly-forecast-list" class="hourly-grid">
+                    <!-- Les prévisions toutes les 3h s'afficheront ici -->
+                </div>
+            </div>
         </div>
     </div>
 
