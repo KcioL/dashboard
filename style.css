@@ -293,3 +293,67 @@ h1 {
 
 .hourly-grid::-webkit-scrollbar { height: 8px; }
 .hourly-grid::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+/* --- WIDGET ROUE DU DESTIN --- */
+.wheel-widget {
+    text-align: center;
+    justify-content: center;
+}
+
+.wheel-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+#wheel-result {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--accent);
+    background: #fafafa;
+    border: 2px dashed #e0e0e0;
+    padding: 1.5rem;
+    border-radius: 16px;
+    width: 100%;
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+/* Animation pendant que la roue tourne */
+.spinning {
+    animation: pulse 0.1s infinite alternate;
+    color: var(--text-muted) !important;
+    border-color: var(--text-muted) !important;
+}
+
+@keyframes pulse {
+    from { transform: scale(0.98); opacity: 0.8; }
+    to { transform: scale(1.02); opacity: 1; }
+}
+
+#spin-btn {
+    background: var(--text-main);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+#spin-btn:hover {
+    background: #2d2924;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+#spin-btn:active {
+    transform: translateY(1px);
+}
