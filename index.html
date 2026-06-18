@@ -55,12 +55,8 @@
             <h2>Prévisions Météo</h2>
             
             <div class="city-selector">
-                <label for="city-select">Choisir une ville :</label>
-                <select id="city-select">
-                    <option value="Pau,fr">Pau</option>
-                    <option value="Saint-Paul-lès-Dax,fr">Saint-Paul-lès-Dax</option>
-                    <option value="Mourenx,fr">Mourenx</option>
-                </select>
+                <input type="text" id="city-input" placeholder="Tapez une ville (ex: Tokyo, Pau...)" />
+                <button id="search-city-btn">Rechercher</button>
             </div>
 
             <div id="forecast-loader" style="text-align: center; margin: 20px 0;">Chargement des prévisions...</div>
