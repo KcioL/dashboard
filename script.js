@@ -130,7 +130,7 @@ fetchCurrentWeather(currentCityQuery);
 setInterval(() => fetchCurrentWeather(currentCityQuery), 3600000); 
 
 // ==========================================
-// 5. GESTION DE LA MODALE MÉTÉO (Recherche libre)
+// 5. GESTION DE LA MODALE MÉTÉO (Recherche libre & Détails)
 // ==========================================
 const weatherWidget = document.getElementById('weather-widget');
 const weatherModal = document.getElementById('weather-modal');
@@ -142,9 +142,17 @@ const searchCityBtn = document.getElementById('search-city-btn');
 const forecastContainer = document.getElementById('forecast-container');
 const forecastLoader = document.getElementById('forecast-loader');
 
+// Nouveaux éléments pour les détails par tranche de 3h
+const hourlyContainer = document.getElementById('hourly-container');
+const hourlyForecastList = document.getElementById('hourly-forecast-list');
+const hourlyTitle = document.getElementById('hourly-title');
+
+let fullForecastData = []; // Va stocker toutes les données de l'API
+
 weatherWidget.addEventListener('click', () => {
     weatherModal.style.display = 'flex';
     cityInput.value = currentCityQuery;
+    hourlyContainer.style.display = 'none'; // On cache les détails à l'ouverture
     fetchForecast(currentCityQuery);
 });
 
@@ -159,6 +167,7 @@ function handleCitySearch() {
         fetchForecast(selectedCity);
         currentCityQuery = selectedCity;
         fetchCurrentWeather(selectedCity);
+        hourlyContainer.style.display = 'none'; // Cacher les détails de l'ancienne ville
     }
 }
 
@@ -178,7 +187,10 @@ async function fetchForecast(cityQuery) {
         if(!res.ok) throw new Error("Erreur prévisions");
         const data = await res.json();
         
-        const dailyForecasts = data.list.filter(item => item.dt_txt.includes("12:00:00"));
+        fullForecastData = data.list; // Sauvegarde des 40 prévisions renvoyées par l'API
+        
+        // On récupère uniquement la prévision de 12:00 pour l'aperçu des 5 jours
+        const dailyForecasts = fullForecastData.filter(item => item.dt_txt.includes("12:00:00"));
         
         forecastLoader.style.display = 'none';
         
@@ -187,6 +199,9 @@ async function fetchForecast(cityQuery) {
             const dayName = dateObj.toLocaleDateString('fr-FR', { weekday: 'short' });
             const dayNum = dateObj.getDate();
             const dateDisplay = `${dayName.charAt(0).toUpperCase() + dayName.slice(1)} ${dayNum}`;
+            
+            // Le format "YYYY-MM-DD" dont on aura besoin pour filtrer les heures plus tard
+            const dateString = day.dt_txt.split(' ')[0]; 
             
             const iconCode = day.weather[0].icon;
             const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
@@ -199,9 +214,38 @@ async function fetchForecast(cityQuery) {
                 <div class="forecast-temp">${Math.round(day.main.temp)}°C</div>
                 <div class="forecast-desc">${day.weather[0].description}</div>
             `;
+            
+            // Événement Clic : Affiche les détails pour ce jour spécifique !
+            card.addEventListener('click', () => showHourlyForecast(dateString, dateDisplay));
+            
             forecastContainer.appendChild(card);
         });
     } catch (e) {
         forecastLoader.textContent = "Ville introuvable. Vérifiez l'orthographe !";
     }
+}
+
+// Fonction pour afficher les prévisions toutes les 3 heures d'une journée précise
+function showHourlyForecast(targetDateString, dateDisplay) {
+    hourlyContainer.style.display = 'block';
+    hourlyTitle.textContent = `Détails pour le ${dateDisplay}`;
+    hourlyForecastList.innerHTML = '';
+    
+    // On filtre toutes nos données pour ne garder que celles du jour cliqué
+    const dayData = fullForecastData.filter(item => item.dt_txt.startsWith(targetDateString));
+    
+    dayData.forEach(item => {
+        const timeString = item.dt_txt.split(' ')[1].substring(0, 5); // "15:00"
+        const iconCode = item.weather[0].icon;
+        const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
+        
+        const hourlyCard = document.createElement('div');
+        hourlyCard.className = 'hourly-item';
+        hourlyCard.innerHTML = `
+            <div class="hourly-time">${timeString}</div>
+            <img class="hourly-icon" src="${iconUrl}" alt="icone">
+            <div class="hourly-temp">${Math.round(item.main.temp)}°C</div>
+        `;
+        hourlyForecastList.appendChild(hourlyCard);
+    });
 }
