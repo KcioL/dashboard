@@ -213,3 +213,36 @@ h1 {
     color: var(--text-muted);
     text-transform: capitalize;
 }
+/* Rendre les jours cliquables */
+.forecast-day {
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.forecast-day:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    border: 1px solid var(--accent);
+}
+
+/* Grille horizontale pour les prévisions par tranche de 3h */
+.hourly-grid {
+    display: flex;
+    overflow-x: auto; /* Permet de scroller horizontalement */
+    gap: 1rem;
+    padding-bottom: 10px;
+}
+.hourly-item {
+    background: var(--bg-color);
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+    min-width: 80px;
+    flex-shrink: 0;
+}
+.hourly-time { font-weight: bold; font-size: 0.9rem; margin-bottom: 5px; color: var(--text-main); }
+.hourly-icon { width: 40px; height: 40px; }
+.hourly-temp { color: var(--accent); font-weight: bold; font-size: 1.1rem; }
+
+/* Design de la barre de défilement horizontale */
+.hourly-grid::-webkit-scrollbar { height: 6px; }
+.hourly-grid::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
