@@ -1,15 +1,9 @@
-console.log("▶️ Le fichier script.js a bien démarré !");
-
-// ==========================================
-// 1. IMPORTATION DE FIREBASE
-// ==========================================
-// On utilise gstatic au lieu de unpkg pour plus de stabilité
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy } 
 from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 // ==========================================
-// 2. CONFIGURATION FIREBASE
+// 1. CONFIGURATION FIREBASE
 // ==========================================
 const firebaseConfig = {
     apiKey: "AIzaSyDmOiHUetoxS2Yzyou-rzehbPTIHmPrU6Q",
@@ -22,19 +16,14 @@ const firebaseConfig = {
 
 let app, db;
 try {
-    console.log("🔄 Tentative d'initialisation de Firebase...");
     app = initializeApp(firebaseConfig);
-    console.log("✅ app Firebase initialisée avec succès !");
-    
     db = getFirestore(app);
-    console.log("✅ getFirestore a fonctionné !");
 } catch (e) {
     document.getElementById('list-loader').textContent = "Erreur de configuration Firebase.";
-    console.error("❌ ERREUR FIREBASE AU DÉMARRAGE :", e);
 }
 
 // ==========================================
-// 3. GESTION DE LA LISTE DE COURSES
+// 2. GESTION DE LA LISTE DE COURSES
 // ==========================================
 const shoppingListEl = document.getElementById('shopping-list');
 const shoppingInput = document.getElementById('shopping-input');
@@ -42,12 +31,10 @@ const addBtn = document.getElementById('add-item-btn');
 const loader = document.getElementById('list-loader');
 
 if (db) {
-    console.log("📡 Connexion à la collection 'courses'...");
     const coursesRef = collection(db, "courses");
     const q = query(coursesRef, orderBy("createdAt", "asc"));
 
     onSnapshot(q, (snapshot) => {
-        console.log("📥 Données reçues depuis Firebase !");
         loader.style.display = 'none';
         shoppingListEl.innerHTML = ''; 
         
@@ -74,12 +61,8 @@ if (db) {
             shoppingListEl.appendChild(li);
         });
     }, (error) => {
-        console.error("❌ ERREUR ONSNAPSHOT :", error);
         if (error.code === 'permission-denied') {
-            loader.innerHTML = `
-                <span style="color:#d93025; font-weight:bold;">Accès refusé !</span><br>
-                Vous devez publier les règles "Mode Test" dans Firestore.
-            `;
+            loader.innerHTML = `<span style="color:#d93025; font-weight:bold;">Accès refusé (Mode Test expiré ?)</span>`;
         } else {
              loader.textContent = "Erreur de chargement de la liste.";
         }
@@ -96,9 +79,8 @@ if (db) {
                 });
                 shoppingInput.value = ''; 
             } catch (e) {
-                console.error("❌ ERREUR AJOUT ARTICLE :", e);
                 if(e.code === 'permission-denied'){
-                    alert("Impossible d'ajouter : Activez le Mode Test dans Firestore.");
+                    alert("Impossible d'ajouter : Vérifiez le Mode Test dans Firestore.");
                 }
             }
         }
@@ -108,12 +90,10 @@ if (db) {
     shoppingInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') addItemToDb();
     });
-} else {
-    console.warn("⚠️ Base de données non connectée, la liste de courses est désactivée.");
 }
 
 // ==========================================
-// 4. GESTION HEURE & DATE
+// 3. GESTION HEURE & DATE
 // ==========================================
 function updateClock() {
     const now = new Date();
@@ -125,10 +105,10 @@ setInterval(updateClock, 1000);
 updateClock(); 
 
 // ==========================================
-// 5. GESTION MÉTÉO (OpenWeatherMap)
+// 4. GESTION MÉTÉO (OpenWeatherMap)
 // ==========================================
 const OWM_API_KEY = '47c727b5e192b4fc5c837bc25007c07e';
-let currentCityQuery = 'Pau,fr'; 
+let currentCityQuery = 'Pau'; 
 
 async function fetchCurrentWeather(cityQuery) {
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${cityQuery}&appid=${OWM_API_KEY}&units=metric&lang=fr`;
@@ -142,7 +122,6 @@ async function fetchCurrentWeather(cityQuery) {
         document.getElementById('weather-desc').textContent = data.weather[0].description;
         document.getElementById('weather-minmax').textContent = `Min: ${Math.round(data.main.temp_min)}° Max: ${Math.round(data.main.temp_max)}°`;
     } catch (e) {
-        console.error("Erreur météo actuelle:", e);
         document.getElementById('weather-desc').textContent = "Erreur de chargement";
     }
 }
@@ -151,18 +130,22 @@ fetchCurrentWeather(currentCityQuery);
 setInterval(() => fetchCurrentWeather(currentCityQuery), 3600000); 
 
 // ==========================================
-// 6. GESTION DE LA MODALE MÉTÉO
+// 5. GESTION DE LA MODALE MÉTÉO (Recherche libre)
 // ==========================================
 const weatherWidget = document.getElementById('weather-widget');
 const weatherModal = document.getElementById('weather-modal');
 const closeModalBtn = document.getElementById('close-modal');
-const citySelect = document.getElementById('city-select');
+
+const cityInput = document.getElementById('city-input');
+const searchCityBtn = document.getElementById('search-city-btn');
+
 const forecastContainer = document.getElementById('forecast-container');
 const forecastLoader = document.getElementById('forecast-loader');
 
 weatherWidget.addEventListener('click', () => {
     weatherModal.style.display = 'flex';
-    fetchForecast(citySelect.value);
+    cityInput.value = currentCityQuery;
+    fetchForecast(currentCityQuery);
 });
 
 closeModalBtn.addEventListener('click', () => { weatherModal.style.display = 'none'; });
@@ -170,11 +153,18 @@ window.addEventListener('click', (e) => {
     if (e.target === weatherModal) weatherModal.style.display = 'none';
 });
 
-citySelect.addEventListener('change', (e) => {
-    const selectedCity = e.target.value;
-    fetchForecast(selectedCity);
-    currentCityQuery = selectedCity;
-    fetchCurrentWeather(selectedCity);
+function handleCitySearch() {
+    const selectedCity = cityInput.value.trim();
+    if (selectedCity !== '') {
+        fetchForecast(selectedCity);
+        currentCityQuery = selectedCity;
+        fetchCurrentWeather(selectedCity);
+    }
+}
+
+searchCityBtn.addEventListener('click', handleCitySearch);
+cityInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') handleCitySearch();
 });
 
 async function fetchForecast(cityQuery) {
@@ -212,7 +202,6 @@ async function fetchForecast(cityQuery) {
             forecastContainer.appendChild(card);
         });
     } catch (e) {
-        console.error("Erreur prévisions:", e);
-        forecastLoader.textContent = "Impossible de charger les prévisions.";
+        forecastLoader.textContent = "Ville introuvable. Vérifiez l'orthographe !";
     }
 }
