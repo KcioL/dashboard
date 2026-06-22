@@ -187,10 +187,25 @@ async function fetchForecast(cityQuery) {
         if(!res.ok) throw new Error("Erreur prévisions");
         const data = await res.json();
         
-        fullForecastData = data.list; // Sauvegarde des 40 prévisions renvoyées par l'API
+        // Sauvegarde des 40 prévisions renvoyées par l'API
+        fullForecastData = data.list; 
         
-        // On récupère uniquement la prévision de 12:00 pour l'aperçu des 5 jours
-        const dailyForecasts = fullForecastData.filter(item => item.dt_txt.includes("12:00:00"));
+        // --- NOUVELLE LOGIQUE : Chercher la température MAX par jour ---
+        const dailyMax = {};
+        
+        fullForecastData.forEach(item => {
+            // On isole la date (ex: "2026-06-22") sans l'heure
+            const dateString = item.dt_txt.split(' ')[0]; 
+            
+            // Si on n'a pas encore enregistré ce jour, OU si la température de cet item est plus haute que l'ancienne
+            if (!dailyMax[dateString] || item.main.temp > dailyMax[dateString].main.temp) {
+                dailyMax[dateString] = item;
+            }
+        });
+        
+        // On convertit notre dictionnaire en tableau et on prend les 5 premiers jours
+        const dailyForecasts = Object.values(dailyMax).slice(0, 5);
+        // ---------------------------------------------------------------
         
         forecastLoader.style.display = 'none';
         
@@ -200,7 +215,6 @@ async function fetchForecast(cityQuery) {
             const dayNum = dateObj.getDate();
             const dateDisplay = `${dayName.charAt(0).toUpperCase() + dayName.slice(1)} ${dayNum}`;
             
-            // Le format "YYYY-MM-DD" dont on aura besoin pour filtrer les heures plus tard
             const dateString = day.dt_txt.split(' ')[0]; 
             
             const iconCode = day.weather[0].icon;
@@ -215,12 +229,13 @@ async function fetchForecast(cityQuery) {
                 <div class="forecast-desc">${day.weather[0].description}</div>
             `;
             
-            // Événement Clic : Affiche les détails pour ce jour spécifique !
+            // Événement Clic : Affiche toujours les détails horaires pour ce jour
             card.addEventListener('click', () => showHourlyForecast(dateString, dateDisplay));
             
             forecastContainer.appendChild(card);
         });
     } catch (e) {
+        console.error("Erreur prévisions:", e);
         forecastLoader.textContent = "Ville introuvable. Vérifiez l'orthographe !";
     }
 }
