@@ -111,24 +111,52 @@ const OWM_API_KEY = '47c727b5e192b4fc5c837bc25007c07e';
 let currentCityQuery = 'Pau'; 
 
 async function fetchCurrentWeather(cityQuery) {
-    const url = `https://api.openweathermap.org/data/2.5/weather?q=${cityQuery}&appid=${OWM_API_KEY}&units=metric&lang=fr`;
+    const urlCurrent = `https://api.openweathermap.org/data/2.5/weather?q=${cityQuery}&appid=${OWM_API_KEY}&units=metric&lang=fr`;
+    const urlForecast = `https://api.openweathermap.org/data/2.5/forecast?q=${cityQuery}&appid=${OWM_API_KEY}&units=metric&lang=fr`;
+
     try {
-        const res = await fetch(url);
-        if(!res.ok) throw new Error("Ville introuvable");
-        const data = await res.json();
+        // 1. Récupérer la météo actuelle (pour l'heure, la temp actuelle et l'icône)
+        const resCurrent = await fetch(urlCurrent);
+        if(!resCurrent.ok) throw new Error("Ville introuvable");
+        const dataCurrent = await resCurrent.json();
         
-        document.getElementById('current-city-name').textContent = data.name;
-        document.getElementById('weather-temp').textContent = `${Math.round(data.main.temp)}°C`;
-        document.getElementById('weather-desc').textContent = data.weather[0].description;
-        document.getElementById('weather-minmax').textContent = `Min: ${Math.round(data.main.temp_min)}° Max: ${Math.round(data.main.temp_max)}°`;
+        // 2. Récupérer les prévisions pour calculer le VRAI Min/Max de la journée
+        const resForecast = await fetch(urlForecast);
+        const dataForecast = await resForecast.json();
+        
+        // Créer la date d'aujourd'hui au format "YYYY-MM-DD" (formaté comme l'API)
+        const today = new Date();
+        const todayString = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+        
+        // Filtrer pour ne garder que les relevés d'aujourd'hui
+        const todayEntries = dataForecast.list.filter(item => item.dt_txt.startsWith(todayString));
+        
+        // Valeur de secours par défaut
+        let realMin = dataCurrent.main.temp_min;
+        let realMax = dataCurrent.main.temp_max;
+        
+        // Si on trouve des données pour aujourd'hui, on calcule le vrai min et max
+        if (todayEntries.length > 0) {
+            realMin = Math.min(...todayEntries.map(item => item.main.temp_min));
+            realMax = Math.max(...todayEntries.map(item => item.main.temp_max));
+        }
+        
+        // 3. Mettre à jour l'affichage sur le Dashboard
+        document.getElementById('current-city-name').textContent = dataCurrent.name;
+        document.getElementById('weather-temp').textContent = `${Math.round(dataCurrent.main.temp)}°C`;
+        document.getElementById('weather-desc').textContent = dataCurrent.weather[0].description;
+        
+        // Affichage des vraies valeurs calculées
+        document.getElementById('weather-minmax').textContent = `Min: ${Math.round(realMin)}° Max: ${Math.round(realMax)}°`;
+
     } catch (e) {
+        console.error("Erreur météo actuelle:", e);
         document.getElementById('weather-desc').textContent = "Erreur de chargement";
     }
 }
 
 fetchCurrentWeather(currentCityQuery);
-setInterval(() => fetchCurrentWeather(currentCityQuery), 3600000); 
-
+setInterval(() => fetchCurrentWeather(currentCityQuery), 3600000);
 // ==========================================
 // 5. GESTION DE LA MODALE MÉTÉO (Recherche libre & Détails)
 // ==========================================
